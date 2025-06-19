@@ -1,0 +1,6 @@
+@NewsNotifier_HostAddress = http://localhost:5221
+
+GET {{NewsNotifier_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

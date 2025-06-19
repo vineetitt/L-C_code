@@ -1,0 +1,14 @@
+D:\NewsNotofier\NewsNotifierClient\bin\Debug\net8.0\NewsNotifierClient.exe
+D:\NewsNotofier\NewsNotifierClient\bin\Debug\net8.0\NewsNotifierClient.deps.json
+D:\NewsNotofier\NewsNotifierClient\bin\Debug\net8.0\NewsNotifierClient.runtimeconfig.json
+D:\NewsNotofier\NewsNotifierClient\bin\Debug\net8.0\NewsNotifierClient.dll
+D:\NewsNotofier\NewsNotifierClient\bin\Debug\net8.0\NewsNotifierClient.pdb
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\NewsNotifierClient.GeneratedMSBuildEditorConfig.editorconfig
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\NewsNotifierClient.AssemblyInfoInputs.cache
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\NewsNotifierClient.AssemblyInfo.cs
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\NewsNotifierClient.csproj.CoreCompileInputs.cache
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\NewsNotifierClient.dll
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\refint\NewsNotifierClient.dll
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\NewsNotifierClient.pdb
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\NewsNotifierClient.genruntimeconfig.cache
+D:\NewsNotofier\NewsNotifierClient\obj\Debug\net8.0\ref\NewsNotifierClient.dll

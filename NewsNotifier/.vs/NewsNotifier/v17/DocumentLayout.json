@@ -1,0 +1,214 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\NewsNotofier\\NewsNotifier\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\services\\newsapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:services\\newsapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\services\\newsfetchbackgroundservice .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:services\\newsfetchbackgroundservice .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\models\\entities\\newsarticle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:models\\entities\\newsarticle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\models\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:models\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BA86FC6E-D804-4416-9E9B-79205CF6C9DE}|..\\NewsNotifierClient\\NewsNotifierClient.csproj|d:\\newsnotofier\\newsnotifierclient\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\migrations\\20250619130426_addnewsarticlecategory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:migrations\\20250619130426_addnewsarticlecategory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\migrations\\20250619125654_add category to newsarticles models.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:migrations\\20250619125654_add category to newsarticles models.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|d:\\newsnotofier\\newsnotifier\\migrations\\20250619124535_add description.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C20BA7F-6C9C-466B-BC9A-541E02E1AD06}|NewsAggregator.Server.csproj|solutionrelative:migrations\\20250619124535_add description.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 11,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "20250619130426_AddNewsArticleCategory.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Migrations\\20250619130426_AddNewsArticleCategory.cs",
+              "RelativeDocumentMoniker": "Migrations\\20250619130426_AddNewsArticleCategory.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Migrations\\20250619130426_AddNewsArticleCategory.cs",
+              "RelativeToolTip": "Migrations\\20250619130426_AddNewsArticleCategory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T13:04:26.625Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "20250619125654_add category to newsarticles models.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Migrations\\20250619125654_add category to newsarticles models.cs",
+              "RelativeDocumentMoniker": "Migrations\\20250619125654_add category to newsarticles models.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Migrations\\20250619125654_add category to newsarticles models.cs",
+              "RelativeToolTip": "Migrations\\20250619125654_add category to newsarticles models.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T12:56:54.426Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Category.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Models\\Entities\\Category.cs",
+              "RelativeDocumentMoniker": "Models\\Entities\\Category.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Models\\Entities\\Category.cs",
+              "RelativeToolTip": "Models\\Entities\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T12:53:24.67Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "20250619124535_add description.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Migrations\\20250619124535_add description.cs",
+              "RelativeDocumentMoniker": "Migrations\\20250619124535_add description.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Migrations\\20250619124535_add description.cs",
+              "RelativeToolTip": "Migrations\\20250619124535_add description.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T12:45:35.853Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "NewsArticle.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Models\\Entities\\NewsArticle.cs",
+              "RelativeDocumentMoniker": "Models\\Entities\\NewsArticle.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Models\\Entities\\NewsArticle.cs",
+              "RelativeToolTip": "Models\\Entities\\NewsArticle.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T12:43:16.63Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "NewsApiService.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Services\\NewsApiService.cs",
+              "RelativeDocumentMoniker": "Services\\NewsApiService.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Services\\NewsApiService.cs",
+              "RelativeToolTip": "Services\\NewsApiService.cs",
+              "ViewState": "AgIAAF8AAAAAAAAAAIAwwG8AAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T12:39:12.469Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "NewsFetchBackgroundService .cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Services\\NewsFetchBackgroundService .cs",
+              "RelativeDocumentMoniker": "Services\\NewsFetchBackgroundService .cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Services\\NewsFetchBackgroundService .cs",
+              "RelativeToolTip": "Services\\NewsFetchBackgroundService .cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwBwAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T12:40:21.781Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-19T12:02:41.232Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifier\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifier\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADQAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T10:27:59.544Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "D:\\NewsNotofier\\NewsNotifierClient\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "..\\NewsNotifierClient\\Services\\AuthService.cs",
+              "ToolTip": "D:\\NewsNotofier\\NewsNotifierClient\\Services\\AuthService.cs",
+              "RelativeToolTip": "..\\NewsNotifierClient\\Services\\AuthService.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACIAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T09:16:28.007Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 177,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
