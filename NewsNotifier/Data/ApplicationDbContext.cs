@@ -18,7 +18,8 @@ namespace NewsNotifier.Data
         public DbSet<NewsArticle> NewsArticles { get; set; }
         public DbSet<ExternalApiConfig> ExternalApis { get; set; }
         public DbSet<SavedArticle> SavedArticles { get; set; }
-
+        public DbSet<ExternalServer> ExternalServers { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<NotificationConfig> NotificationConfigs { get; set; }
     }
 }

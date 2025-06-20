@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace NewsNotifier.Services
 {
-
     public class NewsApiService : INewsApiService
     {
         private readonly HttpClient _httpClient;
@@ -86,8 +85,22 @@ namespace NewsNotifier.Services
             }
 
             _logger.LogInformation($"Inserted {newArticles.Count} new articles.");
-        }
 
+            var server = await _context.ExternalServers.FirstOrDefaultAsync(s => s.Name == "TheNewsAPI");
+            if (server != null)
+            {
+                server.LastAccessed = DateTime.UtcNow;
+                _context.ExternalServers.Update(server);
+                await _context.SaveChangesAsync();
+            }
+
+
+            //var categoryIds = newArticles.Select(n => n.CategoryID).Distinct();
+            //var notificationConfigs = _context.NotificationConfig
+            //    .Include(nc => nc.User)
+            //    .Where(nc => categoryIds.Contains(nc.CategoryID) && nc.IsEnabled)
+            //    .ToList();
+        }
 
 
 
@@ -127,10 +140,6 @@ namespace NewsNotifier.Services
 
             return newsList;
         }
-
-
-        
-
     }
 
 

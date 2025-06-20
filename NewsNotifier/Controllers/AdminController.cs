@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NewsAggregator.Server.Dtos.AdminDtos;
+using NewsAggregator.Server.Interfaces;
+using NewsNotifier.Models.Entities;
 
 namespace NewsAggregator.Server.Controllers
 {
@@ -9,41 +11,76 @@ namespace NewsAggregator.Server.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
+        private readonly IAdminService _adminService;
+
+        public AdminController(IAdminService adminService)
+        {
+            _adminService = adminService;
+        }
+
+        // GET: api/Admin/servers
         [HttpGet("servers")]
-        public IActionResult GetExternalServers()
+        public async Task<IActionResult> GetExternalServers()
         {
-            // TODO: Fetch from DB
-            return Ok(new[]
+            try
             {
-                new { Id = 1, Name = "News API", Status = "Active" },
-                new { Id = 2, Name = "The News API", Status = "Not Active" }
-            });
+                var servers = await _adminService.GetExternalServersAsync();
+                return Ok(servers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving servers: {ex.Message}");
+            }
         }
 
+        // PUT: api/Admin/servers/{id}
         [HttpPut("servers/{id}")]
-        public IActionResult UpdateServer(int id, [FromBody] UpdateServerRequest request)
+        public async Task<IActionResult> UpdateServer(int id, [FromBody] UpdateServerRequest request)
         {
-            // TODO: Update server in DB
-            return Ok(new { Message = $"Server {id} updated successfully" });
+            if (string.IsNullOrWhiteSpace(request.ApiKey))
+                return BadRequest("API key is required.");
+
+            try
+            {
+                var result = await _adminService.UpdateServerAsync(id, request.ApiKey);
+                if (!result)
+                    return NotFound($"Server with ID {id} not found.");
+
+                return Ok(new { Message = $"Server {id} updated successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the server: {ex.Message}");
+            }
         }
 
-        // Example: Add a new category
+        // POST: api/Admin/categories
         [HttpPost("categories")]
-        public IActionResult AddCategory([FromBody] AddCategoryRequest request)
+        public async Task<IActionResult> AddCategory([FromBody] AddCategoryRequest request)
         {
-            // TODO: Add to DB
-            return Ok(new { Message = $"Category {request.Name} added successfully" });
-        }
+            if (string.IsNullOrWhiteSpace(request.Name))
+                return BadRequest("Category name is required.");
 
-        public class UpdateServerRequest
-        {
-            public string ApiKey { get; set; }
-        }
+            try
+            {
+                var added = await _adminService.AddCategoryAsync(request.Name);
+                if (!added)
+                    return Conflict($"Category '{request.Name}' already exists.");
 
-        public class AddCategoryRequest
-        {
-            public string Name { get; set; }
+                return Ok(new { Message = $"Category '{request.Name}' added successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while adding the category: {ex.Message}");
+            }
         }
-
     }
 }
