@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using NewsNotifier.Interfaces;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using NewsAggregator.Server.Services;
+using System.Text;
 
 namespace NewsNotifier.Services
 {
@@ -16,13 +18,16 @@ namespace NewsNotifier.Services
         private readonly ApplicationDbContext _context;
         private readonly ILogger<NewsApiService> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public NewsApiService(HttpClient httpClient, ApplicationDbContext context, ILogger<NewsApiService> logger, IConfiguration configuration)
+        public NewsApiService(HttpClient httpClient, ApplicationDbContext context, ILogger<NewsApiService> logger, IConfiguration configuration, IEmailService emailService)
         {
             _httpClient = httpClient;
             _context = context;
             _logger = logger;
             _configuration = configuration;
+            _emailService = emailService;
+
         }
 
 
@@ -95,11 +100,30 @@ namespace NewsNotifier.Services
             }
 
 
-            //var categoryIds = newArticles.Select(n => n.CategoryID).Distinct();
-            //var notificationConfigs = _context.NotificationConfig
-            //    .Include(nc => nc.User)
-            //    .Where(nc => categoryIds.Contains(nc.CategoryID) && nc.IsEnabled)
-            //    .ToList();
+            var categoryIds = newArticles.Select(n => n.CategoryID).Distinct();
+            var notificationConfigs = _context.NotificationConfigs
+                .Include(nc => nc.User)
+                .Where(nc => categoryIds.Contains(nc.CategoryID) && nc.IsEnabled)
+                .ToList();
+            var categoryWiseArticles = newArticles.GroupBy(n => n.CategoryID);
+
+            foreach (var group in categoryWiseArticles)
+            {
+                var categoryId = group.Key;
+                var newsForCategory = group.ToList();
+
+                var usersToNotify = notificationConfigs
+                    .Where(nc => nc.CategoryID == categoryId)
+                    .Select(nc => nc.User)
+                    .Distinct();
+
+                foreach (var user in usersToNotify)
+                {
+                    var subject = $"Latest news in {group.First().Category?.Name ?? "your category"}";
+                    var body = BuildEmailBody(newsForCategory);
+                    await _emailService.SendEmailAsync(user.Email, subject, body);
+                }
+            }
         }
 
 
@@ -140,6 +164,22 @@ namespace NewsNotifier.Services
 
             return newsList;
         }
+        private string BuildEmailBody(List<NewsArticle> articles)
+        {
+            var body = new StringBuilder();
+            body.AppendLine("Here are the latest news articles:");
+
+            foreach (var article in articles)
+            {
+                body.AppendLine($"- {article.Title} ({article.PublishedDate:yyyy-MM-dd})");
+                body.AppendLine($"  {article.Description}");
+                body.AppendLine($"  Read more: {article.URL}");
+                body.AppendLine();
+            }
+
+            return body.ToString();
+        }
+
     }
 
 

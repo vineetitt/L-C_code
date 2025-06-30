@@ -4,6 +4,6 @@ namespace NewsNotifier.Interfaces
 {
     public interface IEmailService
     {
-        void SendEmail(User user, NewsArticle article);
+        Task SendEmailAsync(string to, string subject, string body);
     }
 }

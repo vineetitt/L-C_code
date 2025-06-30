@@ -5,47 +5,95 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using static NewsNotifierClient.Models.AuthModels;
+using NewsNotifierClient.Services;
 
 namespace NewsNotifierClient.Services
 {
     public class AuthService
     {
-            private readonly HttpClient _client;
-            private readonly string _baseUrl;
+        private readonly HttpClient _client;
+        private readonly string _baseUrl;
+        private readonly UserService _userService;
 
-            public string JwtToken { get; private set; } = string.Empty;
 
-            public AuthService(string baseUrl)
+        public string JwtToken { get; private set; } = string.Empty;
+        public HttpClient Client => _client;
+
+        public AuthService(string baseUrl)
+        {
+            _baseUrl = baseUrl.TrimEnd('/');
+            _client = new HttpClient();
+            _userService = new UserService(_client, _baseUrl);
+        }
+
+        public async Task SignupAsync(SignupRequest request)
+        {
+            var response = await _client.PostAsJsonAsync($"{_baseUrl}/auth/signup", request);
+
+            if (response.IsSuccessStatusCode)
+                Console.WriteLine("Signup successful!");
+            else
+                Console.WriteLine($"Signup failed: {await response.Content.ReadAsStringAsync()}");
+        }
+
+        public async Task<bool> LoginAsync(LoginRequest request)
+        {
+            var response = await _client.PostAsJsonAsync($"{_baseUrl}/auth/login", request);
+
+            if (response.IsSuccessStatusCode)
             {
-                _baseUrl = baseUrl.TrimEnd('/');
-                _client = new HttpClient();
+                var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                JwtToken = loginResponse?.Token ?? "";
+
+                _client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", JwtToken);
+
+                Console.WriteLine("Login successful!");
+                Console.WriteLine("JWT Token:\n" + JwtToken);
+                await ShowAccessibleApisAsync();
+                return true; // Login success
+            }
+            else
+            {
+                Console.WriteLine($"Login failed: {await response.Content.ReadAsStringAsync()}");
+                return false; // Login failed
+            }
+        }
+
+
+
+        public async Task ShowAccessibleApisAsync()
+        {
+            if (string.IsNullOrEmpty(JwtToken))
+            {
+                Console.WriteLine("Login token missing. Cannot fetch accessible APIs.");
+                return;
             }
 
-            public async Task SignupAsync(SignupRequest request)
-            {
-                var response = await _client.PostAsJsonAsync($"{_baseUrl}/auth/signup", request);
+            _client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", JwtToken);
 
-                if (response.IsSuccessStatusCode)
-                    Console.WriteLine("Signup successful!");
-                else
-                    Console.WriteLine($"Signup failed: {await response.Content.ReadAsStringAsync()}");
-            }
-
-            public async Task LoginAsync(LoginRequest request)
+            try
             {
-                var response = await _client.PostAsJsonAsync($"{_baseUrl}/auth/login", request);
+                var response = await _client.GetAsync($"{_baseUrl}/user/accessible-apis");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
-                    JwtToken = loginResponse?.Token ?? "";
-                    Console.WriteLine("Login successful!");
-                    Console.WriteLine("JWT Token:\n" + JwtToken);
+                    var apis = await response.Content.ReadFromJsonAsync<List<string>>();
+                    Console.WriteLine("\nYou have access to the following endpoints:");
+                    foreach (var api in apis!)
+                        Console.WriteLine($"- {api}");
                 }
                 else
                 {
-                    Console.WriteLine($"Login failed: {await response.Content.ReadAsStringAsync()}");
+                    Console.WriteLine("Could not fetch accessible APIs.");
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching API list: " + ex.Message);
+            }
+        }
+
     }
 }

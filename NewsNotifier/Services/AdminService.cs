@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NewsAggregator.Server.Dtos.ServerDtos;
 using NewsAggregator.Server.Interfaces;
 using NewsAggregator.Server.Repositories.Interfaces;
 using NewsNotifier.Data;
@@ -14,6 +15,22 @@ namespace NewsAggregator.Server.Services
         public AdminService(IAdminRepository adminRepository)
         {
             _adminRepository = adminRepository;
+        }
+
+        //public async Task<IEnumerable<ServerSummaryDto>> GetServerSummariesAsync()
+        //{
+        //    var servers = await _adminRepository.GetAllServersAsync();
+
+        //    return servers.Select(s => new ServerSummaryDto
+        //    {
+        //        ServerId = s.ServerID,
+        //        Name = s.Name,
+        //        Status = s.Status
+        //    });
+        //}
+        public Task<IEnumerable<ServerSummaryDto>> GetServerSummariesAsync()
+        {
+            return _adminRepository.GetServerSummariesAsync();
         }
 
         public Task<IEnumerable<ExternalServer>> GetExternalServersAsync()
@@ -56,9 +73,15 @@ namespace NewsAggregator.Server.Services
             if (exists)
                 return false;
 
+
             var category = new Category { Name = CategoryName.Trim() };
             await _adminRepository.AddCategoryAsync(category);
             return true;
+        }
+
+        public Task<List<Category>> GetAllCategories()
+        {
+            return  _adminRepository.GetAllCategories();
         }
     }
 }

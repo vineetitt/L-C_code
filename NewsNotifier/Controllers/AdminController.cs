@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NewsAggregator.Server.Dtos.AdminDtos;
 using NewsAggregator.Server.Interfaces;
 using NewsNotifier.Models.Entities;
@@ -8,7 +9,7 @@ namespace NewsAggregator.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -17,6 +18,22 @@ namespace NewsAggregator.Server.Controllers
         {
             _adminService = adminService;
         }
+
+
+        [HttpGet("servers/summaries")]
+        public async Task<IActionResult> GetExternalServerSummaries()
+        {
+            try
+            {
+                var summaries = await _adminService.GetServerSummariesAsync();
+                return Ok(summaries);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving server list: {ex.Message}");
+            }
+        }
+
 
         // GET: api/Admin/servers
         [HttpGet("servers")]
@@ -81,6 +98,14 @@ namespace NewsAggregator.Server.Controllers
             {
                 return StatusCode(500, $"An error occurred while adding the category: {ex.Message}");
             }
+        }
+
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            var categories = await _adminService.GetAllCategories();
+              
+            return Ok(categories);
         }
     }
 }

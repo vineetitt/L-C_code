@@ -3,6 +3,7 @@ using NewsNotifier.Data;
 using NewsNotifier.Interfaces;
 using NewsNotifier.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using NewsAggregator.Server.Dtos.ServerDtos;
 
 namespace NewsAggregator.Server.Repositories
 {
@@ -14,6 +15,19 @@ namespace NewsAggregator.Server.Repositories
         {
             _context = context;
         }
+
+        public async Task<IEnumerable<ServerSummaryDto>> GetServerSummariesAsync()
+        {
+            return await _context.ExternalServers
+                .Select(s => new ServerSummaryDto
+                {
+                    ServerId = s.ServerID,
+                    Name = s.Name,
+                    Status = s.Status 
+                })
+                .ToListAsync();
+        }
+
 
         public async Task<IEnumerable<ExternalServer>> GetAllServersAsync()
         {
@@ -41,6 +55,11 @@ namespace NewsAggregator.Server.Repositories
         public async Task<bool> CategoryExistsAsync(string categoryName)
         {
             return await _context.Categories.AnyAsync(c => c.Name == categoryName);
+        }
+
+        public async Task<List<Category>> GetAllCategories()
+        {
+            return await _context.Categories.ToListAsync();
         }
     }
 }

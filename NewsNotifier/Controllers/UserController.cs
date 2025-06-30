@@ -18,21 +18,6 @@ namespace NewsNotifier.Controllers
             _context = context;
         }
 
-        [HttpGet("categories")]
-        public IActionResult GetCategories()
-        {
-            var categories = _context.Categories
-                .Select(c => new
-                {
-                    c.CategoryID,
-                    c.Name
-                })
-                .ToList();
-
-            return Ok(categories);
-        }
-
-        
         [HttpGet("news")]
         public IActionResult GetNews([FromQuery] int? categoryId)
         {
@@ -78,6 +63,21 @@ namespace NewsNotifier.Controllers
                 return NotFound();
 
             return Ok(article);
+        }
+
+
+
+        [HttpGet("accessible-apis")]
+        public IActionResult GetAccessibleApis()
+        {
+            var accessibleApis = new List<string>
+            {
+                "GET /api/user/categories",
+                "GET /api/user/news",
+                "GET /api/user/news/{id}"
+            };
+
+            return Ok(accessibleApis);
         }
     }
 }
