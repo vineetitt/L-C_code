@@ -12,6 +12,5 @@ namespace NewsAggregator.Server.Interfaces
         Task<bool> AddCategoryAsync(string name);
         Task<List<Category>> GetAllCategories();
 
-
     }
 }

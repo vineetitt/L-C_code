@@ -60,7 +60,11 @@ namespace NewsAggregator.Server.Controllers
                 return Unauthorized("Invalid credentials");
 
             var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            return Ok(new 
+            { 
+                token = token,
+                role = user.Role,
+            });
         }
 
         private string GenerateJwtToken(User user)

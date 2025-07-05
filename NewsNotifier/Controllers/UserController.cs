@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NewsAggregator.Server.Interfaces;
 using NewsNotifier.Data;
 using NewsNotifier.Models.Entities;
 using NewsNotifier.Repositories.Interfaces;
@@ -11,31 +12,24 @@ namespace NewsNotifier.Controllers
     [Authorize(Roles = "User")]
     public class UserController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly INewsService _newsService;
 
-        public UserController(ApplicationDbContext context)
+        public UserController(INewsService newsService)
         {
-            _context = context;
+            _newsService = newsService;
         }
 
         [HttpGet("news")]
         public IActionResult GetNews([FromQuery] int? categoryId)
         {
-            var query = _context.NewsArticles.AsQueryable();
-
-            //if (categoryId.HasValue)
-            //{
-            //    query = query.Where(n => n.CategoryID == categoryId.Value);
-            //}
-
-            var newsList = query
+            var newsList = _newsService.GetNews(categoryId)
                 .Select(n => new
                 {
                     n.ArticleID,
                     n.Title,
                     n.Description,
                     n.URL,
-                    //Category = n.Category.Name,
+                    Category = n.Category?.Name,
                     n.PublishedDate
                 })
                 .ToList();
@@ -46,26 +40,37 @@ namespace NewsNotifier.Controllers
         [HttpGet("news/{id}")]
         public IActionResult GetNewsById(int id)
         {
-            var article = _context.NewsArticles
-                .Where(n => n.ArticleID == id)
-                .Select(n => new
-                {
-                    n.ArticleID,
-                    n.Title,
-                    n.Description,
-                    n.URL,
-                    //Category = n.Category.Name,
-                    n.PublishedDate
-                })
-                .FirstOrDefault();
+            var article = _newsService.GetNewsById(id);
 
             if (article == null)
                 return NotFound();
 
-            return Ok(article);
+            var result = new
+            {
+                article.ArticleID,
+                article.Title,
+                article.Description,
+                article.URL,
+                Category = article.Category?.Name,
+                article.PublishedDate
+            };
+
+            return Ok(result);
         }
 
+        [HttpGet("categories")]
+        public IActionResult GetCategories()
+        {
+            var categories = _newsService.GetAllCategories()
+                .Select(c => new
+                {
+                    c.CategoryID,
+                    c.Name
+                })
+                .ToList();
 
+            return Ok(categories);
+        }
 
         [HttpGet("accessible-apis")]
         public IActionResult GetAccessibleApis()

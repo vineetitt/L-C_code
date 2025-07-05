@@ -14,9 +14,8 @@ namespace NewsNotifierClient.Services
         private readonly HttpClient _client;
         private readonly string _baseUrl;
         private readonly UserService _userService;
-
-
         public string JwtToken { get; private set; } = string.Empty;
+        public string Role { get; private set; } = string.Empty;
         public HttpClient Client => _client;
 
         public AuthService(string baseUrl)
@@ -44,19 +43,21 @@ namespace NewsNotifierClient.Services
             {
                 var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
                 JwtToken = loginResponse?.Token ?? "";
+                Role = loginResponse?.Role ?? "";
 
                 _client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", JwtToken);
 
                 Console.WriteLine("Login successful!");
                 Console.WriteLine("JWT Token:\n" + JwtToken);
+                Console.WriteLine($"Logged in as: {Role}");
                 await ShowAccessibleApisAsync();
-                return true; // Login success
+                return true; 
             }
             else
             {
                 Console.WriteLine($"Login failed: {await response.Content.ReadAsStringAsync()}");
-                return false; // Login failed
+                return false;
             }
         }
 
