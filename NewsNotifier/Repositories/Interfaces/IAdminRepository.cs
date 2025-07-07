@@ -8,17 +8,15 @@ namespace NewsAggregator.Server.Repositories.Interfaces
         Task<IEnumerable<ServerSummaryDto>> GetServerSummariesAsync();
         Task<IEnumerable<ExternalServer>> GetAllServersAsync();
 
-        Task<ExternalServer?> GetServerByIdAsync(int id);
+        Task<ExternalServer?> GetServerByIdAsync(int serverId);
         Task UpdateServerAsync(ExternalServer server);
 
         Task<bool> AddCategoryAsync(Category category);
         Task<bool> CategoryExistsAsync(string categoryName);
+        Task<List<Category>> GetAllCategoriesAsync();
 
-        Task<List<Category>> GetAllCategories();
-
-        Task<NewsArticle?> GetNewsByIdAsync(int id);
+        Task<NewsArticle?> GetNewsByIdAsync(int newsId);
         Task UpdateNewsAsync(NewsArticle news);
         Task DeleteNewsAsync(NewsArticle news);
-
     }
 }

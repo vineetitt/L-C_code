@@ -30,8 +30,7 @@ namespace NewsNotifier.Controllers
                     n.URL,
                     Category = n.Category?.Name,
                     n.PublishedDate
-                })
-                .ToList();
+                });
 
             return Ok(newsList);
         }
@@ -40,8 +39,7 @@ namespace NewsNotifier.Controllers
         public IActionResult GetNewsById(int id)
         {
             var article = _newsService.GetNewsById(id);
-
-            if (article == null)
+            if (article is null)
                 return NotFound();
 
             var result = new
@@ -65,8 +63,7 @@ namespace NewsNotifier.Controllers
                 {
                     c.CategoryID,
                     c.Name
-                })
-                .ToList();
+                });
 
             return Ok(categories);
         }
@@ -74,14 +71,12 @@ namespace NewsNotifier.Controllers
         [HttpGet("accessible-apis")]
         public IActionResult GetAccessibleApis()
         {
-            var accessibleApis = new List<string>
+            return Ok(new List<string>
             {
                 "GET /api/user/categories",
                 "GET /api/user/news",
                 "GET /api/user/news/{id}"
-            };
-
-            return Ok(accessibleApis);
+            });
         }
 
         [HttpPost("save-article/{articleId}")]
@@ -100,7 +95,6 @@ namespace NewsNotifier.Controllers
         public async Task<IActionResult> GetSavedArticles()
         {
             var userId = int.Parse(User.FindFirst("id")!.Value);
-
             var savedArticles = await _userService.GetSavedArticlesAsync(userId);
 
             return Ok(savedArticles);
@@ -112,12 +106,10 @@ namespace NewsNotifier.Controllers
             var userId = int.Parse(User.FindFirst("id")!.Value);
 
             var success = await _userService.UnsaveArticleAsync(userId, articleId);
-
             if (!success)
                 return NotFound("Saved article not found.");
 
             return Ok("Article unsaved successfully.");
         }
-
     }
 }

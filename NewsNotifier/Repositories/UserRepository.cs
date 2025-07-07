@@ -3,58 +3,56 @@ using NewsNotifier.Data;
 using NewsNotifier.Models.Entities;
 using NewsAggregator.Server.Repositories.Interfaces;
 using NewsAggregator.Server.Dtos;
+
 namespace NewsNotifier.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _context;
+
         public UserRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<User?> GetUserByIdAsync(int id)
+        public async Task<User?> GetUserById(int id)
         {
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
-        public async Task AddUserAsync(User user)
+        public async Task AddUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task UpdateUser(User user)
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
-            }
+            if (user == null)
+                return;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> SaveArticleAsync(int userId, int articleId)
+        public async Task<bool> SaveArticle(int userId, int articleId)
         {
-            var article = await _context.NewsArticles.FindAsync(articleId);
-            if (article == null)
+            if (!await ArticleExistsAsync(articleId))
                 return false;
 
-            var alreadySaved = await _context.SavedArticles
-                .AnyAsync(sa => sa.UserID == userId && sa.ArticleID == articleId);
-
-            if (alreadySaved)
+            if (await IsArticleAlreadySaved(userId, articleId))
                 return false;
 
             var savedArticle = new SavedArticle
@@ -69,7 +67,7 @@ namespace NewsNotifier.Repositories
             return true;
         }
 
-        public async Task<List<SavedArticleDto>> GetSavedArticlesAsync(int userId)
+        public async Task<List<SavedArticleDto>> GetSavedArticles(int userId)
         {
             return await _context.SavedArticles
                 .Where(sa => sa.UserID == userId)
@@ -86,7 +84,7 @@ namespace NewsNotifier.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> UnsaveArticleAsync(int userId, int articleId)
+        public async Task<bool> UnsaveArticle(int userId, int articleId)
         {
             var savedArticle = await _context.SavedArticles
                 .FirstOrDefaultAsync(sa => sa.UserID == userId && sa.ArticleID == articleId);
@@ -98,6 +96,15 @@ namespace NewsNotifier.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+        private async Task<bool> ArticleExistsAsync(int articleId)
+        {
+            return await _context.NewsArticles.AnyAsync(a => a.ArticleID == articleId);
+        }
 
+        private async Task<bool> IsArticleAlreadySaved(int userId, int articleId)
+        {
+            return await _context.SavedArticles
+                .AnyAsync(sa => sa.UserID == userId && sa.ArticleID == articleId);
+        }
     }
 }

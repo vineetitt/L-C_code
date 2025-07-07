@@ -1,6 +1,5 @@
 ﻿using NewsAggregator.Server.Repositories.Interfaces;
 using NewsNotifier.Data;
-using NewsNotifier.Interfaces;
 using NewsNotifier.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using NewsAggregator.Server.Dtos.ServerDtos;
@@ -19,24 +18,23 @@ namespace NewsAggregator.Server.Repositories
         public async Task<IEnumerable<ServerSummaryDto>> GetServerSummariesAsync()
         {
             return await _context.ExternalServers
-                .Select(s => new ServerSummaryDto
+                .Select(server => new ServerSummaryDto
                 {
-                    ServerId = s.ServerID,
-                    Name = s.Name,
-                    Status = s.Status
+                    ServerId = server.ServerID,
+                    Name = server.Name,
+                    Status = server.Status
                 })
                 .ToListAsync();
         }
-
 
         public async Task<IEnumerable<ExternalServer>> GetAllServersAsync()
         {
             return await _context.ExternalServers.ToListAsync();
         }
 
-        public async Task<ExternalServer?> GetServerByIdAsync(int ServerId)
+        public async Task<ExternalServer?> GetServerByIdAsync(int serverId)
         {
-            return await _context.ExternalServers.FindAsync(ServerId);
+            return await _context.ExternalServers.FindAsync(serverId);
         }
 
         public async Task UpdateServerAsync(ExternalServer server)
@@ -49,7 +47,7 @@ namespace NewsAggregator.Server.Repositories
         {
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
-            return true;
+            return true; 
         }
 
         public async Task<bool> CategoryExistsAsync(string categoryName)
@@ -57,14 +55,14 @@ namespace NewsAggregator.Server.Repositories
             return await _context.Categories.AnyAsync(c => c.Name == categoryName);
         }
 
-        public async Task<List<Category>> GetAllCategories()
+        public async Task<List<Category>> GetAllCategoriesAsync()
         {
             return await _context.Categories.ToListAsync();
         }
 
-        public async Task<NewsArticle?> GetNewsByIdAsync(int id)
+        public async Task<NewsArticle?> GetNewsByIdAsync(int newsId)
         {
-            return await _context.NewsArticles.FindAsync(id);
+            return await _context.NewsArticles.FindAsync(newsId);
         }
 
         public async Task UpdateNewsAsync(NewsArticle news)
@@ -78,6 +76,5 @@ namespace NewsAggregator.Server.Repositories
             _context.NewsArticles.Remove(news);
             await _context.SaveChangesAsync();
         }
-
     }
 }

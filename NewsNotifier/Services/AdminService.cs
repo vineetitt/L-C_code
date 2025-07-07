@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NewsAggregator.Server.Dtos.ServerDtos;
+﻿using NewsAggregator.Server.Dtos.ServerDtos;
 using NewsAggregator.Server.Interfaces;
 using NewsAggregator.Server.Repositories.Interfaces;
-using NewsNotifier.Data;
 using NewsNotifier.Models.Entities;
-using System;
 
 namespace NewsAggregator.Server.Services
 {
@@ -27,77 +24,88 @@ namespace NewsAggregator.Server.Services
             return _adminRepository.GetAllServersAsync();
         }
 
-        public Task<ExternalServer?> GetExternalServerByIdAsync(int ServerId)
+        public async Task<bool> UpdateServerAsync(int serverId, string newApiKey)
         {
-            if (ServerId <= 0)
-                throw new ArgumentException("Server ID must be a positive integer.");
-            return _adminRepository.GetServerByIdAsync(ServerId);
-        }
+            ValidateServerId(serverId);
+            ValidateApiKey(newApiKey);
 
-        public async Task<bool> UpdateServerAsync(int ServerId, string newApiKey)
-        {
-            if (ServerId <= 0)
-                throw new ArgumentException("Server ID must be a positive integer.", nameof(ServerId));
-
-            if (string.IsNullOrWhiteSpace(newApiKey))
-                throw new ArgumentException("API key must not be empty.", nameof(newApiKey));
-
-            var server = await _adminRepository.GetServerByIdAsync(ServerId);
-            if (server == null)
+            var existingServer = await _adminRepository.GetServerByIdAsync(serverId);
+            if (existingServer == null)
                 return false;
 
-            server.APIKey = newApiKey.Trim();
-            server.LastAccessed = DateTime.UtcNow;
+            existingServer.APIKey = newApiKey.Trim();
+            existingServer.LastAccessed = DateTime.UtcNow;
 
-            await _adminRepository.UpdateServerAsync(server);
+            await _adminRepository.UpdateServerAsync(existingServer);
             return true;
         }
 
-        public async Task<bool> AddCategoryAsync(string CategoryName)
+        public async Task<bool> AddCategoryAsync(string categoryName)
         {
-            if (string.IsNullOrWhiteSpace(CategoryName))
-                throw new ArgumentException("Category name must not be empty.", nameof(CategoryName));
+            ValidateCategoryName(categoryName);
 
-            var exists = await _adminRepository.CategoryExistsAsync(CategoryName);
-            if (exists)
+            var categoryExists = await _adminRepository.CategoryExistsAsync(categoryName);
+            if (categoryExists)
                 return false;
 
-
-            var category = new Category { Name = CategoryName.Trim() };
-            await _adminRepository.AddCategoryAsync(category);
+            var newCategory = new Category { Name = categoryName.Trim() };
+            await _adminRepository.AddCategoryAsync(newCategory);
             return true;
         }
 
         public Task<List<Category>> GetAllCategories()
         {
-            return _adminRepository.GetAllCategories();
+            return _adminRepository.GetAllCategoriesAsync();
         }
 
-        public async Task<bool> UpdateNewsAsync(int id, NewsArticle updatedNews)
+        public async Task<bool> UpdateNewsAsync(int newsId, NewsArticle updatedNews)
         {
-            var news = await _adminRepository.GetNewsByIdAsync(id);
-            if (news == null)
+            var existingNews = await _adminRepository.GetNewsByIdAsync(newsId);
+            if (existingNews == null)
                 return false;
 
-            news.Title = updatedNews.Title;
-            news.Description = updatedNews.Description;
-            news.URL = updatedNews.URL;
-            news.CategoryID = updatedNews.CategoryID;
-            news.PublishedDate = updatedNews.PublishedDate;
+            MapUpdatedNews(existingNews, updatedNews);
 
-            await _adminRepository.UpdateNewsAsync(news);
+            await _adminRepository.UpdateNewsAsync(existingNews);
             return true;
         }
 
-        public async Task<bool> DeleteNewsAsync(int id)
+        public async Task<bool> DeleteNewsAsync(int newsId)
         {
-            var news = await _adminRepository.GetNewsByIdAsync(id);
-            if (news == null)
+            var newsToDelete = await _adminRepository.GetNewsByIdAsync(newsId);
+            if (newsToDelete == null)
                 return false;
 
-            await _adminRepository.DeleteNewsAsync(news);
+            await _adminRepository.DeleteNewsAsync(newsToDelete);
             return true;
         }
 
+        private void ValidateServerId(int serverId)
+        {
+            if (serverId <= 0)
+                throw new ArgumentException("Server ID must be a positive integer.", nameof(serverId));
+        }
+
+        private void ValidateApiKey(string apiKey)
+        {
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new ArgumentException("API key must not be empty.", nameof(apiKey));
+        }
+
+        private void ValidateCategoryName(string categoryName)
+        {
+            if (string.IsNullOrWhiteSpace(categoryName))
+                throw new ArgumentException("Category name must not be empty.", nameof(categoryName));
+        }
+
+        private void MapUpdatedNews(NewsArticle existingNews, NewsArticle updatedNews)
+        {
+            existingNews.Title = updatedNews.Title;
+            existingNews.Description = updatedNews.Description;
+            existingNews.URL = updatedNews.URL;
+            existingNews.CategoryID = updatedNews.CategoryID;
+            existingNews.PublishedDate = updatedNews.PublishedDate;
+        }
     }
 }
+

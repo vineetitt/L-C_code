@@ -1,15 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using NewsAggregator.Server.Dtos;
 using NewsAggregator.Server.Interfaces;
-using NewsNotifier.Data;
 using NewsNotifier.Interfaces;
-using NewsNotifier.Models.Entities;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace NewsAggregator.Server.Controllers
 {
@@ -20,23 +12,28 @@ namespace NewsAggregator.Server.Controllers
         private readonly IAuthService _authService;
         private readonly IEmailService _emailService;
 
-        public AuthController(IAuthService authService , IEmailService emailService)
+        private const string WelcomeSubject = "Welcome to News Aggregator";
+        private const string WelcomeBodyTemplate = "Hello {0},<br/><br/>Welcome to the News Aggregator application!<br/><br/>Enjoy the latest news updates.<br/><br/>Happy Reading!<br/>";
+
+        public AuthController(IAuthService authService, IEmailService emailService)
         {
             _authService = authService;
             _emailService = emailService;
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> Signup(SignupRequest request)
+        public async Task<IActionResult> SignUp(SignupRequest request)
         {
             var result = await _authService.SignupAsync(request);
+
             if (result == "Email already exists")
-                return BadRequest(result);
+                return BadRequest(new { message = result });
 
-            await _emailService.SendEmailAsync(request.Email, "Welcome to News Aggregator",
-        $"Hello {request.Username},<br/><br/>Welcome to the News Aggregator application!<br/><br/>Enjoy the latest news updates.<br/><br/>Happy Reading!<br/>");
+            var emailBody = string.Format(WelcomeBodyTemplate, request.Username);
 
-            return Ok(result);
+            await _emailService.SendEmailAsync(request.Email, WelcomeSubject, emailBody);
+
+            return Ok(new { message = result });
         }
 
         [HttpPost("login")]
@@ -44,20 +41,19 @@ namespace NewsAggregator.Server.Controllers
         {
             try
             {
-                var (token, role, userid) = await _authService.LoginAsync(request);
-                return Ok(new
-                { 
-                    token, 
-                    role,
-                    userId = userid
+                var (token, role, userId) = await _authService.LoginAsync(request);
 
+                return Ok(new
+                {
+                    token,
+                    role,
+                    userId
                 });
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(ex.Message);
+                return Unauthorized(new { message = ex.Message });
             }
         }
     }
-
 }

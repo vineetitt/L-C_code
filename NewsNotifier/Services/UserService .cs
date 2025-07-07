@@ -1,9 +1,8 @@
 ﻿using NewsAggregator.Server.Interfaces;
-using NewsNotifier.Interfaces;
 using NewsNotifier.Models.Entities;
 using NewsNotifier.Repositories.Interfaces;
-using NewsAggregator.Server.Repositories.Interfaces;
 using NewsAggregator.Server.Dtos;
+using NewsAggregator.Server.Repositories.Interfaces;
 
 namespace NewsNotifier.Services
 {
@@ -16,31 +15,21 @@ namespace NewsNotifier.Services
             _userRepository = userRepository;
         }
 
-        public async Task<User?> GetUserByIdAsync(int id)
-        {
-            return await _userRepository.GetUserByIdAsync(id);
-        }
+        public Task<User?> GetUserByIdAsync(int id) => _userRepository.GetUserById(id);
 
-        public Task<IEnumerable<User>> GetAllUsersAsync() => _userRepository.GetAllUsersAsync();
+        public Task<IEnumerable<User>> GetAllUsersAsync() => _userRepository.GetAllUsers();
 
-        public Task CreateUserAsync(User user) => _userRepository.AddUserAsync(user);
+        public Task CreateUserAsync(User user) => _userRepository.AddUser(user);
 
-        public Task UpdateUserAsync(User user) => _userRepository.UpdateUserAsync(user);
+        public Task UpdateUserAsync(User user) => _userRepository.UpdateUser(user);
 
-        public Task DeleteUserAsync(int id) => _userRepository.DeleteUserAsync(id);
+        public Task DeleteUserAsync(int id) => _userRepository.DeleteUser(id);
 
+        public Task<bool> SaveArticleAsync(int userId, int articleId) => _userRepository.SaveArticle(userId, articleId);
 
-        public async Task<bool> SaveArticleAsync(int userId, int articleId)
-        {
-            return await _userRepository.SaveArticleAsync(userId, articleId);
-        }
-        public async Task<List<SavedArticleDto>> GetSavedArticlesAsync(int userId)
-        {
-            return await _userRepository.GetSavedArticlesAsync(userId);
-        }
-        public async Task<bool> UnsaveArticleAsync(int userId, int articleId)
-        {
-            return await _userRepository.UnsaveArticleAsync(userId, articleId);
-        }
+        public Task<List<SavedArticleDto>> GetSavedArticlesAsync(int userId) => _userRepository.GetSavedArticles(userId);
+
+        public Task<bool> UnsaveArticleAsync(int userId, int articleId) => _userRepository.UnsaveArticle(userId, articleId);
     }
 }
+

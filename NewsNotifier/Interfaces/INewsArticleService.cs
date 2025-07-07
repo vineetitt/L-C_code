@@ -1,4 +1,5 @@
-﻿using NewsNotifier.Models.Entities;
+﻿
+using NewsNotifier.Models.Entities;
 
 namespace NewsNotifier.Interfaces
 {
@@ -6,21 +7,17 @@ namespace NewsNotifier.Interfaces
     {
         Task<NewsArticle?> GetNewsByIdAsync(int id);
         Task<IEnumerable<NewsArticle>> GetAllNewsAsync();
-        Task CreateNewsAsync(NewsArticle article);
-        Task UpdateNewsAsync(NewsArticle article);
-        Task DeleteNewsAsync(int id);
-        Task ReportArticleAsync(int articleId, int userId);
-
         Task<IEnumerable<(NewsArticle Article, int ReportCount)>> GetReportedArticlesAsync();
-
-        Task HideOrUnhideArticleAsync(int articleId, bool hide);
-
-        Task HideOrUnhideCategoryAsync(int categoryId, bool hide);
-
-        Task AddBlockedKeywordAsync(string keyword);
         Task<IEnumerable<string>> GetBlockedKeywordsAsync();
-        Task DeleteBlockedKeywordAsync(string keyword);
-
         Task<List<NewsArticle>> GetPersonalizedNewsAsync(List<int> categoryIds, List<string> keywords);
+
+        Task CreateNewsAsync(NewsArticle article);
+        Task ReportArticleAsync(int articleId, int userId);
+        Task AddBlockedKeywordAsync(string keyword);
+        Task UpdateNewsAsync(NewsArticle article);
+        Task HideOrUnhideArticleAsync(int articleId, bool hide);
+        Task HideOrUnhideCategoryAsync(int categoryId, bool hide);
+        Task DeleteNewsAsync(int id);
+        Task DeleteBlockedKeywordAsync(string keyword);
     }
 }

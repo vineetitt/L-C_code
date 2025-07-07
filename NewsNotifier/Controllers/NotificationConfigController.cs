@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NewsAggregator.Server.Dtos;
 using NewsAggregator.Server.Interfaces;
 using NewsNotifier.Models.Entities;
@@ -16,6 +17,7 @@ namespace NewsAggregator.Server.Controllers
             _notificationService = notificationService;
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost("configure")]
         public async Task<IActionResult> ConfigureNotification([FromBody] NotificationConfigRequestDto request)
         {

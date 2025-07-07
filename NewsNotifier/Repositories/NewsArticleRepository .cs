@@ -9,14 +9,15 @@ namespace NewsNotifier.Repositories
     public class NewsArticleRepository : INewsArticleRepository
     {
         private readonly ApplicationDbContext _context;
+
         public NewsArticleRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<NewsArticle?> GetByIdAsync(int id)
+        public Task<NewsArticle?> GetByIdAsync(int id)
         {
-            return await _context.NewsArticles.FindAsync(id);
+            return _context.NewsArticles.FindAsync(id).AsTask();
         }
 
         public async Task<IEnumerable<NewsArticle>> GetAllAsync()
@@ -30,7 +31,6 @@ namespace NewsNotifier.Repositories
                 .Where(a => !a.IsHidden && !a.Category.IsHidden &&
                     !blockedKeywords.Any(k => a.Title.ToLower().Contains(k) || (a.Content ?? "").ToLower().Contains(k)))
                 .ToListAsync();
-
         }
 
         public async Task AddAsync(NewsArticle article)
@@ -48,11 +48,11 @@ namespace NewsNotifier.Repositories
         public async Task DeleteAsync(int id)
         {
             var article = await _context.NewsArticles.FindAsync(id);
-            if (article != null)
-            {
-                _context.NewsArticles.Remove(article);
-                await _context.SaveChangesAsync();
-            }
+            if (article is null)
+                return;
+
+            _context.NewsArticles.Remove(article);
+            await _context.SaveChangesAsync();
         }
 
         public async Task ReportArticleAsync(ReportedArticle report)
@@ -61,28 +61,29 @@ namespace NewsNotifier.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> GetReportCountAsync(int articleId)
+        public Task<int> GetReportCountAsync(int articleId)
         {
-            return await _context.ReportedArticles.CountAsync(r => r.ArticleID == articleId);
+            return _context.ReportedArticles.CountAsync(r => r.ArticleID == articleId);
         }
 
         public async Task<IEnumerable<(NewsArticle Article, int ReportCount)>> GetReportedArticlesAsync()
         {
-            return await _context.ReportedArticles
-                .Include(r => r.NewsArticle) 
+            var groupedReports = await _context.ReportedArticles
+                .Include(r => r.NewsArticle)
                 .GroupBy(r => r.ArticleID)
                 .Select(g => new
                 {
-                    Article = g.First().NewsArticle, 
+                    Article = g.First().NewsArticle,
                     ReportCount = g.Count()
                 })
-                .ToListAsync()
-                .ContinueWith(task => task.Result.Select(x => (x.Article, x.ReportCount)));
+                .ToListAsync();
+
+            return groupedReports.Select(x => (x.Article, x.ReportCount));
         }
 
-        public async Task<Category?> GetCategoryByIdAsync(int categoryId)
+        public Task<Category?> GetCategoryByIdAsync(int categoryId)
         {
-            return await _context.Categories.FindAsync(categoryId);
+            return _context.Categories.FindAsync(categoryId).AsTask();
         }
 
         public async Task UpdateCategoryAsync(Category category)
@@ -97,35 +98,35 @@ namespace NewsNotifier.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<string>> GetBlockedKeywordsAsync()
+        public Task<IEnumerable<string>> GetBlockedKeywordsAsync()
         {
-            return await _context.BlockedKeywords
+            return _context.BlockedKeywords
                 .Select(k => k.Keyword)
-                .ToListAsync();
+                .ToListAsync()
+                .ContinueWith(task => (IEnumerable<string>)task.Result);
         }
 
         public async Task DeleteBlockedKeywordAsync(string keyword)
         {
             var existing = await _context.BlockedKeywords
                 .FirstOrDefaultAsync(k => k.Keyword == keyword);
-            if (existing != null)
-            {
-                _context.BlockedKeywords.Remove(existing);
-                await _context.SaveChangesAsync();
-            }
-        }
 
+            if (existing is null)
+                return;
+
+            _context.BlockedKeywords.Remove(existing);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<List<NewsArticle>> GetPersonalizedNewsAsync(List<int> categoryIds, List<string> keywords)
         {
             return await _context.NewsArticles
                 .Include(a => a.Category)
                 .Where(a => !a.IsHidden && !a.Category.IsHidden &&
-                       (categoryIds.Contains(a.CategoryID) ||
-                       keywords.Any(k => a.Title.ToLower().Contains(k) || (a.Content ?? "").ToLower().Contains(k))))
+                            (categoryIds.Contains(a.CategoryID) ||
+                             keywords.Any(k => a.Title.ToLower().Contains(k) ||
+                                               (a.Content ?? string.Empty).ToLower().Contains(k))))
                 .ToListAsync();
         }
-
-
     }
 }
