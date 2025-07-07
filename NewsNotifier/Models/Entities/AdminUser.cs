@@ -1,6 +1,7 @@
-﻿namespace NewsAggregator.Server.Models.Entities
+﻿namespace NewsNotifier.Models.Entities
 {
-    public class AdminUser
+    public class AdminUser : User
     {
+
     }
 }

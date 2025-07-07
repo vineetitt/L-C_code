@@ -34,7 +34,7 @@ namespace NewsNotifier.Services
                     }
                 }
 
-                await Task.Delay(TimeSpan.FromHours(3), stoppingToken); 
+                await Task.Delay(TimeSpan.FromSeconds(3), stoppingToken); 
             }
         }
     }
