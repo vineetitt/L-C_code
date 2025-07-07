@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "DaKQgqrar0fJE4Whm9J9wew8LkxiTKQCRV72q8bVgrU=",
+  "Source": "NewsAggregator.client",
+  "BasePath": "_content/NewsAggregator.client",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
