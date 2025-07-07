@@ -1,6 +1,8 @@
-﻿using NewsNotifier.Interfaces;
+﻿using NewsAggregator.Server.Interfaces;
+using NewsNotifier.Interfaces;
 using NewsNotifier.Models.Entities;
 using NewsNotifier.Repositories.Interfaces;
+using NewsAggregator.Server.Repositories.Interfaces;
 
 namespace NewsNotifier.Services
 {
@@ -13,7 +15,10 @@ namespace NewsNotifier.Services
             _userRepository = userRepository;
         }
 
-        public Task<User?> GetUserByIdAsync(int id) => _userRepository.GetUserByIdAsync(id);
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            return await _userRepository.GetUserByIdAsync(id);
+        }
 
         public Task<IEnumerable<User>> GetAllUsersAsync() => _userRepository.GetAllUsersAsync();
 
@@ -22,5 +27,21 @@ namespace NewsNotifier.Services
         public Task UpdateUserAsync(User user) => _userRepository.UpdateUserAsync(user);
 
         public Task DeleteUserAsync(int id) => _userRepository.DeleteUserAsync(id);
+
+
+        public async Task<bool> SaveArticleAsync(int userId, int articleId)
+        {
+            return await _userRepository.SaveArticleAsync(userId, articleId);
+        }
+
+        public async Task<List<object>> GetSavedArticlesAsync(int userId)
+        {
+            return await _userRepository.GetSavedArticlesAsync(userId);
+        }
+
+        public async Task<bool> UnsaveArticleAsync(int userId, int articleId)
+        {
+            return await _userRepository.UnsaveArticleAsync(userId, articleId);
+        }
     }
 }

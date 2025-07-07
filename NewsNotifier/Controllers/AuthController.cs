@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NewsAggregator.Server.Dtos;
+using NewsAggregator.Server.Interfaces;
 using NewsNotifier.Data;
+using NewsNotifier.Interfaces;
 using NewsNotifier.Models.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,83 +13,51 @@ using System.Text;
 
 namespace NewsAggregator.Server.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IConfiguration _config;
+        private readonly IAuthService _authService;
+        private readonly IEmailService _emailService;
 
-        public AuthController(ApplicationDbContext context, IPasswordHasher<User> passwordHasher, IConfiguration config)
+        public AuthController(IAuthService authService , IEmailService emailService)
         {
-            _context = context;
-            _passwordHasher = passwordHasher;
-            _config = config;
+            _authService = authService;
+            _emailService = emailService;
         }
 
         [HttpPost("signup")]
         public async Task<IActionResult> Signup(SignupRequest request)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-                return BadRequest("Email already exists");
+            var result = await _authService.SignupAsync(request);
+            if (result == "Email already exists")
+                return BadRequest(result);
 
-            var user = new User
-            {
-                Username = request.Username,
-                Email = request.Email,
-                Role = "User"
-            };
-            user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
+            await _emailService.SendEmailAsync(request.Email, "Welcome to News Aggregator",
+        $"Hello {request.Username},<br/><br/>Welcome to the News Aggregator application!<br/><br/>Enjoy the latest news updates.<br/><br/>Happy Reading!<br/>");
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("User registered successfully");
+            return Ok(result);
         }
 
-        [HttpPost("Login")]
-
-        public async Task<IActionResult> Login(Dtos.LoginRequest request)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest request)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
-            if (user == null)
-                return Unauthorized("Invalid credentials");
-
-            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
-            if (result == PasswordVerificationResult.Failed)
-                return Unauthorized("Invalid credentials");
-
-            var token = GenerateJwtToken(user);
-            return Ok(new 
-            { 
-                token = token,
-                role = user.Role,
-            });
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
+            try
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+                var (token, role, userid) = await _authService.LoginAsync(request);
+                return Ok(new
+                { 
+                    token, 
+                    role,
+                    userId = userid
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(6),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
-
-
     }
+
 }

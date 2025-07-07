@@ -28,6 +28,7 @@ namespace NewsNotifier.Models.Entities
         public int Likes { get; set; }
         public int Dislikes { get; set; }
 
+        public bool IsHidden { get; set; } = false;
         public ICollection<SavedArticle> SavedArticles { get; set; } = new List<SavedArticle>();
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }

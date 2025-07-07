@@ -10,11 +10,11 @@ namespace NewsNotifier.Models.Entities
 
         [ForeignKey("User")]
         public int UserID { get; set; }
-        public User User { get; set; } = null!;
+        public User? User { get; set; } = null!;
 
         [ForeignKey("Category")]
         public int CategoryID { get; set; }
-        public Category Category { get; set; } = null!;
+        public Category? Category { get; set; } = null!;
 
         public string? Keywords { get; set; }
 

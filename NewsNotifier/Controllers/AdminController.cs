@@ -9,7 +9,7 @@ namespace NewsAggregator.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -104,8 +104,34 @@ namespace NewsAggregator.Server.Controllers
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await _adminService.GetAllCategories();
-              
+
             return Ok(categories);
         }
+
+
+        [HttpPut("news/{id}")]
+        public async Task<IActionResult> UpdateNews(int id, [FromBody] NewsArticle updatedNews)
+        {
+            var result = await _adminService.UpdateNewsAsync(id, updatedNews);
+            if (!result)
+                return NotFound("News not found.");
+
+            return Ok("News updated successfully.");
+        }
+
+        [HttpDelete("news/{id}")]
+        public async Task<IActionResult> DeleteNews(int id)
+        {
+            var result = await _adminService.DeleteNewsAsync(id);
+            if (!result)
+                return NotFound("News not found.");
+
+            return Ok("News deleted successfully.");
+        }
+
+
+
+
+
     }
 }

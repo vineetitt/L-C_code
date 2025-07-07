@@ -29,7 +29,7 @@ namespace NewsAggregator.Server.Services
             using var client = new SmtpClient(smtpHost, smtpPort)
             {
                 Credentials = new NetworkCredential(smtpUser, smtpPass),
-                EnableSsl = true
+                EnableSsl = true    
             };
 
             try

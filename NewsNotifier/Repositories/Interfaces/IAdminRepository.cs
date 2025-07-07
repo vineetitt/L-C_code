@@ -15,5 +15,10 @@ namespace NewsAggregator.Server.Repositories.Interfaces
         Task<bool> CategoryExistsAsync(string categoryName);
 
         Task<List<Category>> GetAllCategories();
+
+        Task<NewsArticle?> GetNewsByIdAsync(int id);
+        Task UpdateNewsAsync(NewsArticle news);
+        Task DeleteNewsAsync(NewsArticle news);
+
     }
 }

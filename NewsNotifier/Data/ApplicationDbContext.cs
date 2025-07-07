@@ -21,5 +21,7 @@ namespace NewsNotifier.Data
         public DbSet<ExternalServer> ExternalServers { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<NotificationConfig> NotificationConfigs { get; set; }
+        public DbSet<ReportedArticle> ReportedArticles { get; set; }
+        public DbSet<BlockedKeyword> BlockedKeywords { get; set; }
     }
 }

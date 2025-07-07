@@ -17,17 +17,6 @@ namespace NewsAggregator.Server.Services
             _adminRepository = adminRepository;
         }
 
-        //public async Task<IEnumerable<ServerSummaryDto>> GetServerSummariesAsync()
-        //{
-        //    var servers = await _adminRepository.GetAllServersAsync();
-
-        //    return servers.Select(s => new ServerSummaryDto
-        //    {
-        //        ServerId = s.ServerID,
-        //        Name = s.Name,
-        //        Status = s.Status
-        //    });
-        //}
         public Task<IEnumerable<ServerSummaryDto>> GetServerSummariesAsync()
         {
             return _adminRepository.GetServerSummariesAsync();
@@ -40,7 +29,7 @@ namespace NewsAggregator.Server.Services
 
         public Task<ExternalServer?> GetExternalServerByIdAsync(int ServerId)
         {
-            if (ServerId<= 0)
+            if (ServerId <= 0)
                 throw new ArgumentException("Server ID must be a positive integer.");
             return _adminRepository.GetServerByIdAsync(ServerId);
         }
@@ -81,7 +70,34 @@ namespace NewsAggregator.Server.Services
 
         public Task<List<Category>> GetAllCategories()
         {
-            return  _adminRepository.GetAllCategories();
+            return _adminRepository.GetAllCategories();
         }
+
+        public async Task<bool> UpdateNewsAsync(int id, NewsArticle updatedNews)
+        {
+            var news = await _adminRepository.GetNewsByIdAsync(id);
+            if (news == null)
+                return false;
+
+            news.Title = updatedNews.Title;
+            news.Description = updatedNews.Description;
+            news.URL = updatedNews.URL;
+            news.CategoryID = updatedNews.CategoryID;
+            news.PublishedDate = updatedNews.PublishedDate;
+
+            await _adminRepository.UpdateNewsAsync(news);
+            return true;
+        }
+
+        public async Task<bool> DeleteNewsAsync(int id)
+        {
+            var news = await _adminRepository.GetNewsByIdAsync(id);
+            if (news == null)
+                return false;
+
+            await _adminRepository.DeleteNewsAsync(news);
+            return true;
+        }
+
     }
 }

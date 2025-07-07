@@ -6,9 +6,9 @@ namespace NewsNotifier.Models.Entities
     {
         [Key]
         public int CategoryID { get; set; }
-
-        
         public string Name { get; set; } = null!;
+        public bool IsHidden { get; set; } = false;
+
 
         public ICollection<NewsArticle> NewsArticles { get; set; } = new List<NewsArticle>();
         public ICollection<NotificationConfig> NotificationConfigs { get; set; } = new List<NotificationConfig>();

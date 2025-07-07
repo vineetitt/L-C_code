@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NewsAggregator.Server.Interfaces;
-using NewsNotifier.Data;
-using NewsNotifier.Models.Entities;
-using NewsNotifier.Repositories.Interfaces;
 
 namespace NewsNotifier.Controllers
 {
@@ -13,10 +10,12 @@ namespace NewsNotifier.Controllers
     public class UserController : ControllerBase
     {
         private readonly INewsService _newsService;
+        private readonly IUserService _userService;
 
-        public UserController(INewsService newsService)
+        public UserController(INewsService newsService, IUserService userService)
         {
             _newsService = newsService;
+            _userService = userService;
         }
 
         [HttpGet("news")]
@@ -84,6 +83,40 @@ namespace NewsNotifier.Controllers
 
             return Ok(accessibleApis);
         }
+
+        [HttpPost("save-article/{articleId}")]
+        public async Task<IActionResult> SaveArticle(int articleId)
+        {
+            var userId = int.Parse(User.FindFirst("id")!.Value);
+
+            var success = await _userService.SaveArticleAsync(userId, articleId);
+            if (!success)
+                return BadRequest("Article already saved or not found.");
+
+            return Ok("Article saved successfully.");
+        }
+
+        [HttpGet("saved-articles")]
+        public async Task<IActionResult> GetSavedArticles()
+        {
+            var userId = int.Parse(User.FindFirst("id")!.Value);
+
+            var savedArticles = await _userService.GetSavedArticlesAsync(userId);
+
+            return Ok(savedArticles);
+        }
+
+        [HttpDelete("unsave-article/{articleId}")]
+        public async Task<IActionResult> UnsaveArticle(int articleId)
+        {
+            var userId = int.Parse(User.FindFirst("id")!.Value);
+
+            var success = await _userService.UnsaveArticleAsync(userId, articleId);
+
+            if (!success)
+                return NotFound("Saved article not found.");
+
+            return Ok("Article unsaved successfully.");
+        }
     }
 }
-

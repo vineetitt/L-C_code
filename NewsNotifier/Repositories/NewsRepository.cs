@@ -15,7 +15,11 @@ namespace NewsAggregator.Server.Repositories
 
         public List<NewsArticle> GetNews(int? categoryId)
         {
-            var query = _context.NewsArticles.AsQueryable();
+            var blockedKeywords = _context.BlockedKeywords.Select(k => k.Keyword.ToLower()).ToList();
+
+            var query = _context.NewsArticles
+                        .Where(n => !n.IsHidden &&
+                                    !blockedKeywords.Any(k => n.Title.ToLower().Contains(k) || (n.Content ?? "").ToLower().Contains(k))).AsQueryable();
 
             if (categoryId.HasValue)
             {

@@ -23,7 +23,7 @@ namespace NewsAggregator.Server.Repositories
                 {
                     ServerId = s.ServerID,
                     Name = s.Name,
-                    Status = s.Status 
+                    Status = s.Status
                 })
                 .ToListAsync();
         }
@@ -61,5 +61,23 @@ namespace NewsAggregator.Server.Repositories
         {
             return await _context.Categories.ToListAsync();
         }
+
+        public async Task<NewsArticle?> GetNewsByIdAsync(int id)
+        {
+            return await _context.NewsArticles.FindAsync(id);
+        }
+
+        public async Task UpdateNewsAsync(NewsArticle news)
+        {
+            _context.NewsArticles.Update(news);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteNewsAsync(NewsArticle news)
+        {
+            _context.NewsArticles.Remove(news);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

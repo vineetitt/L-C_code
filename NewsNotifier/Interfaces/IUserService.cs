@@ -1,6 +1,6 @@
 ﻿using NewsNotifier.Models.Entities;
 
-namespace NewsNotifier.Repositories.Interfaces
+namespace NewsAggregator.Server.Interfaces
 {
     public interface IUserService
     {
@@ -9,5 +9,10 @@ namespace NewsNotifier.Repositories.Interfaces
         Task CreateUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(int id);
+
+        Task<bool> SaveArticleAsync(int userId, int articleId);
+        Task<List<object>> GetSavedArticlesAsync(int userId);
+        Task<bool> UnsaveArticleAsync(int userId, int articleId);
+
     }
 }

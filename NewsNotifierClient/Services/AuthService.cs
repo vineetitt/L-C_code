@@ -16,13 +16,14 @@ namespace NewsNotifierClient.Services
         private readonly UserService _userService;
         public string JwtToken { get; private set; } = string.Empty;
         public string Role { get; private set; } = string.Empty;
+        public int UserId { get; private set; }
         public HttpClient Client => _client;
 
         public AuthService(string baseUrl)
         {
             _baseUrl = baseUrl.TrimEnd('/');
             _client = new HttpClient();
-            _userService = new UserService(_client, _baseUrl);
+            //_userService = new UserService(_client, _baseUrl);
         }
 
         public async Task SignupAsync(SignupRequest request)
@@ -44,6 +45,7 @@ namespace NewsNotifierClient.Services
                 var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
                 JwtToken = loginResponse?.Token ?? "";
                 Role = loginResponse?.Role ?? "";
+                UserId = loginResponse?.UserId ?? 0;
 
                 _client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", JwtToken);
@@ -60,8 +62,6 @@ namespace NewsNotifierClient.Services
                 return false;
             }
         }
-
-
 
         public async Task ShowAccessibleApisAsync()
         {
