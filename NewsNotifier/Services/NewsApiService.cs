@@ -57,75 +57,86 @@ namespace NewsNotifier.Services
 
         public async Task FetchAndSaveNewsAsync()
         {
-            var apiKey = _configuration["NewsApi:Key"];
-            var url = $"https://newsapi.org/v2/top-headlines?country=us&apiKey={apiKey}";
-
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Add("User-Agent", "NewsNotifierApp/1.0");
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
+            var sources = new List<(string SourceName, string Url)>
             {
-                var content = await response.Content.ReadAsStringAsync();
-                _logger.LogWarning($"Failed to fetch news. Status: {response.StatusCode}. Body: {content}");
-                return;
-            }
+                ("NewsApi", $"https://newsapi.org/v2/top-headlines?country=us&apiKey={_configuration["NewsApi:Key"]}"),
+                ("TheNewsAPI", $"https://api.thenewsapi.com/v1/news/top?api_token={_configuration["TheNewsApi:Key"]}&locale=us")
+            };
 
-            var json = await response.Content.ReadAsStringAsync();
-            var newsItems = ParseNewsJson(json);
-
-            var existingTitles = new HashSet<string>(
-                _context.NewsArticles.Select(n => n.Title).ToList()
-            );
-
-            var newArticles = newsItems
-                .Where(n => !existingTitles.Contains(n.Title))
-                .ToList();
-
-            foreach (var batch in newArticles.Chunk(25))
+            foreach (var source in sources)
             {
-                _context.NewsArticles.AddRange(batch);
-                await _context.SaveChangesAsync();
-            }
+                var request = new HttpRequestMessage(HttpMethod.Get, source.Url);
+                request.Headers.Add("User-Agent", "NewsNotifierApp/1.0");
 
-            _logger.LogInformation($"Inserted {newArticles.Count} new articles.");
+                var response = await _httpClient.SendAsync(request);
 
-            var server = await _context.ExternalServers.FirstOrDefaultAsync(s => s.Name == "TheNewsAPI");
-            if (server != null)
-            {
-                server.LastAccessed = DateTime.UtcNow;
-                _context.ExternalServers.Update(server);
-                await _context.SaveChangesAsync();
-            }
-
-
-            var categoryIds = newArticles.Select(n => n.CategoryID).Distinct();
-            var notificationConfigs = _context.NotificationConfigs
-                .Include(nc => nc.User)
-                .Where(nc => categoryIds.Contains(nc.CategoryID) && nc.IsEnabled)
-                .ToList();
-            var categoryWiseArticles = newArticles.GroupBy(n => n.CategoryID);
-
-            foreach (var group in categoryWiseArticles)
-            {
-                var categoryId = group.Key;
-                var newsForCategory = group.ToList();
-
-                var usersToNotify = notificationConfigs
-                    .Where(nc => nc.CategoryID == categoryId)
-                    .Select(nc => nc.User)
-                    .Distinct();
-
-                foreach (var user in usersToNotify)
+                if (!response.IsSuccessStatusCode)
                 {
-                    var subject = $"Latest news in {group.First().Category?.Name ?? "your category"}";
-                    var body = BuildEmailBody(newsForCategory);
-                    await _emailService.SendEmailAsync(user.Email, subject, body);
+                    var content = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning($"Failed to fetch news from {source.SourceName}. Status: {response.StatusCode}. Body: {content}");
+                    continue;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var newsItems = ParseNewsJson(json);
+
+                _logger.LogInformation($"[Source: {source.SourceName}] Total articles fetched from API: {newsItems.Count}");
+
+
+                var existingTitles = new HashSet<string>(_context.NewsArticles.Select(n => n.Title).ToList());
+
+                var newArticles = newsItems
+                    .Where(n => !existingTitles.Contains(n.Title))
+                    .ToList();
+
+                foreach (var article in newArticles)
+                {
+                    _logger.LogInformation($"[Source: {source.SourceName}] New Article Fetched: {article.Title}");
+                }
+
+
+                foreach (var batch in newArticles.Chunk(25))
+                {
+                    _context.NewsArticles.AddRange(batch);
+                    await _context.SaveChangesAsync();
+                }
+
+                _logger.LogInformation($"Inserted {newArticles.Count} new articles from {source.SourceName}.");
+
+                var server = await _context.ExternalServers.FirstOrDefaultAsync(s => s.Name == source.SourceName);
+                if (server != null)
+                {
+                    server.LastAccessed = DateTime.UtcNow;
+                    _context.ExternalServers.Update(server);
+                    await _context.SaveChangesAsync();
+                }
+                var categoryIds = newArticles.Select(n => n.CategoryID).Distinct();
+                var notificationConfigs = _context.NotificationConfigs
+                    .Include(nc => nc.User)
+                    .Where(nc => categoryIds.Contains(nc.CategoryID) && nc.IsEnabled)
+                    .ToList();
+
+                var categoryWiseArticles = newArticles.GroupBy(n => n.CategoryID);
+
+                foreach (var group in categoryWiseArticles)
+                {
+                    var categoryId = group.Key;
+                    var newsForCategory = group.ToList();
+
+                    var usersToNotify = notificationConfigs
+                        .Where(nc => nc.CategoryID == categoryId)
+                        .Select(nc => nc.User)
+                        .Distinct();
+
+                    foreach (var user in usersToNotify)
+                    {
+                        var subject = $"Latest news in {group.First().Category?.Name ?? "your category"}";
+                        var body = BuildEmailBody(newsForCategory);
+                        await _emailService.SendEmailAsync(user.Email, subject, body);
+                    }
                 }
             }
         }
-
 
 
         private List<NewsArticle> ParseNewsJson(string json)
