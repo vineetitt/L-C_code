@@ -3,6 +3,7 @@ using NewsNotifier.Interfaces;
 using NewsNotifier.Models.Entities;
 using NewsNotifier.Repositories.Interfaces;
 using NewsAggregator.Server.Repositories.Interfaces;
+using NewsAggregator.Server.Dtos;
 
 namespace NewsNotifier.Services
 {
@@ -33,12 +34,10 @@ namespace NewsNotifier.Services
         {
             return await _userRepository.SaveArticleAsync(userId, articleId);
         }
-
-        public async Task<List<object>> GetSavedArticlesAsync(int userId)
+        public async Task<List<SavedArticleDto>> GetSavedArticlesAsync(int userId)
         {
             return await _userRepository.GetSavedArticlesAsync(userId);
         }
-
         public async Task<bool> UnsaveArticleAsync(int userId, int articleId)
         {
             return await _userRepository.UnsaveArticleAsync(userId, articleId);

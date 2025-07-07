@@ -1,4 +1,5 @@
-﻿using NewsNotifier.Models.Entities;
+﻿using NewsAggregator.Server.Dtos;
+using NewsNotifier.Models.Entities;
 
 namespace NewsAggregator.Server.Repositories.Interfaces
 {
@@ -10,7 +11,8 @@ namespace NewsAggregator.Server.Repositories.Interfaces
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(int id);
         Task<bool> SaveArticleAsync(int userId, int articleId);
-        Task<List<object>> GetSavedArticlesAsync(int userId);
+        Task<List<SavedArticleDto>> GetSavedArticlesAsync(int userId);
+
         Task<bool> UnsaveArticleAsync(int userId, int articleId);
     }
 }

@@ -41,7 +41,6 @@ namespace NewsAggregator.Server.Controllers
 
             return Ok(new { Message = "Notification configuration saved successfully." });
         }
-
     }
 }
 

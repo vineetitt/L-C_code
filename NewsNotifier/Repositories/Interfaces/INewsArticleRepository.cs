@@ -24,6 +24,7 @@ namespace NewsNotifier.Repositories.Interfaces
         Task DeleteBlockedKeywordAsync(string keyword);
 
 
+        Task<List<NewsArticle>> GetPersonalizedNewsAsync(List<int> categoryIds, List<string> keywords);
 
 
     }

@@ -18,5 +18,11 @@ namespace NewsAggregator.Server.Services
         {
             await _repository.SaveOrUpdateConfigAsync(config);
         }
+
+        public async Task<List<NotificationConfig>> GetConfigsByUserIdAsync(int userId)
+        {
+            return await _repository.GetConfigsByUserIdAsync(userId);
+        }
+
     }
 }

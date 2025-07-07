@@ -21,5 +21,6 @@ namespace NewsNotifier.Interfaces
         Task<IEnumerable<string>> GetBlockedKeywordsAsync();
         Task DeleteBlockedKeywordAsync(string keyword);
 
+        Task<List<NewsArticle>> GetPersonalizedNewsAsync(List<int> categoryIds, List<string> keywords);
     }
 }

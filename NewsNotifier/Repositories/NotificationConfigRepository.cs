@@ -64,7 +64,5 @@ namespace NewsAggregator.Server.Repositories
             await _context.SaveChangesAsync();
         }
 
-
-
     }
 }

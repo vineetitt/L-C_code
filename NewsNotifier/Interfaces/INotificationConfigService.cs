@@ -5,6 +5,7 @@ namespace NewsAggregator.Server.Interfaces
     public interface INotificationConfigService
     {
         Task SaveOrUpdateConfigAsync(NotificationConfig config);
+        Task<List<NotificationConfig>> GetConfigsByUserIdAsync(int userId);
 
     }
 }

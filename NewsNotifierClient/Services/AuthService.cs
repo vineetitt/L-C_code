@@ -23,7 +23,6 @@ namespace NewsNotifierClient.Services
         {
             _baseUrl = baseUrl.TrimEnd('/');
             _client = new HttpClient();
-            //_userService = new UserService(_client, _baseUrl);
         }
 
         public async Task SignupAsync(SignupRequest request)

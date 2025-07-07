@@ -2,6 +2,7 @@
 using NewsNotifier.Data;
 using NewsNotifier.Models.Entities;
 using NewsAggregator.Server.Repositories.Interfaces;
+using NewsAggregator.Server.Dtos;
 namespace NewsNotifier.Repositories
 {
     public class UserRepository : IUserRepository
@@ -68,20 +69,20 @@ namespace NewsNotifier.Repositories
             return true;
         }
 
-        public async Task<List<object>> GetSavedArticlesAsync(int userId)
+        public async Task<List<SavedArticleDto>> GetSavedArticlesAsync(int userId)
         {
             return await _context.SavedArticles
                 .Where(sa => sa.UserID == userId)
                 .Include(sa => sa.NewsArticle)
-                .Select(sa => new
+                .Select(sa => new SavedArticleDto
                 {
-                    sa.NewsArticle.ArticleID,
-                    sa.NewsArticle.Title,
-                    sa.NewsArticle.Description,
-                    sa.NewsArticle.URL,
-                    sa.SavedDate
+                    ArticleID = sa.NewsArticle.ArticleID,
+                    Title = sa.NewsArticle.Title,
+                    Description = sa.NewsArticle.Description,
+                    URL = sa.NewsArticle.URL,
+                    CategoryID = sa.NewsArticle.CategoryID,
+                    SavedDate = sa.SavedDate
                 })
-                .Cast<object>()
                 .ToListAsync();
         }
 

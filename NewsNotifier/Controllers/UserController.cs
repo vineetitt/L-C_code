@@ -118,5 +118,6 @@ namespace NewsNotifier.Controllers
 
             return Ok("Article unsaved successfully.");
         }
+
     }
 }

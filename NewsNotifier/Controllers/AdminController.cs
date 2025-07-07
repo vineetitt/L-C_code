@@ -129,9 +129,5 @@ namespace NewsAggregator.Server.Controllers
             return Ok("News deleted successfully.");
         }
 
-
-
-
-
     }
 }

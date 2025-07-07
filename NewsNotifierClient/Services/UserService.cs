@@ -45,7 +45,8 @@ namespace NewsNotifierClient.Services
                 Console.WriteLine("6. Unsave Article");
                 Console.WriteLine("7. Configure Notifications");
                 Console.WriteLine("8. Report Article");
-                Console.WriteLine("9. Logout");
+                Console.WriteLine("9. View Personalized News");
+                Console.WriteLine("10. Logout");
                 Console.Write("Choose: ");
                 var choice = Console.ReadLine();
 
@@ -85,6 +86,11 @@ namespace NewsNotifierClient.Services
                         break;
 
                     case "9":
+                        await ShowPersonalizedNewsAsync();
+                        break;
+
+
+                    case "10":
                         Console.WriteLine("Logging out...");
                         isUserMenuActive = false;
                         break;
@@ -341,5 +347,38 @@ namespace NewsNotifierClient.Services
                 Console.WriteLine("Error configuring notifications: " + ex.Message);
             }
         }
+
+        private async Task ShowPersonalizedNewsAsync()
+        {
+            try
+            {
+                var response = await _client.GetAsync($"{_baseUrl}/NewsArticle/personalized");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var personalizedNews = await response.Content.ReadFromJsonAsync<List<NewsArticles>>();
+
+                    if (personalizedNews != null && personalizedNews.Count > 0)
+                    {
+                        Console.WriteLine("\nPersonalized News Articles:");
+                        foreach (var n in personalizedNews)
+                            Console.WriteLine($"- {n.ArticleID}: {n.Title}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No personalized news articles found.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching personalized news: " + ex.Message);
+            }
+        }
+
     }
 }

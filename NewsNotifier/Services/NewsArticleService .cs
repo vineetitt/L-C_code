@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NewsAggregator.Server.Models.Entities;
 using NewsAggregator.Server.Services;
 using NewsNotifier.Interfaces;
@@ -10,24 +11,24 @@ namespace NewsNotifier.Services
 {
     public class NewsArticleService : INewsArticleService
     {
-        private readonly INewsArticleRepository _repo;
+        private readonly INewsArticleRepository _repository;
         private readonly IEmailService _emailService;
 
         public NewsArticleService(INewsArticleRepository repo, IEmailService emailService)
         {
-            _repo = repo;
+            _repository = repo;
             _emailService = emailService;
         }
 
-        public Task<NewsArticle?> GetNewsByIdAsync(int id) => _repo.GetByIdAsync(id);
+        public Task<NewsArticle?> GetNewsByIdAsync(int id) => _repository.GetByIdAsync(id);
 
-        public Task<IEnumerable<NewsArticle>> GetAllNewsAsync() => _repo.GetAllAsync();
+        public Task<IEnumerable<NewsArticle>> GetAllNewsAsync() => _repository.GetAllAsync();
 
-        public Task CreateNewsAsync(NewsArticle article) => _repo.AddAsync(article);
+        public Task CreateNewsAsync(NewsArticle article) => _repository.AddAsync(article);
 
-        public Task UpdateNewsAsync(NewsArticle article) => _repo.UpdateAsync(article);
+        public Task UpdateNewsAsync(NewsArticle article) => _repository.UpdateAsync(article);
 
-        public Task DeleteNewsAsync(int id) => _repo.DeleteAsync(id);
+        public Task DeleteNewsAsync(int id) => _repository.DeleteAsync(id);
 
         public async Task ReportArticleAsync(int articleId, int userId)
         {
@@ -38,10 +39,10 @@ namespace NewsNotifier.Services
                 ReportedAt = DateTime.UtcNow
             };
 
-            await _repo.ReportArticleAsync(report);
+            await _repository.ReportArticleAsync(report);
 
-            var reportCount = await _repo.GetReportCountAsync(articleId);
-            var article = await _repo.GetByIdAsync(articleId);
+            var reportCount = await _repository.GetReportCountAsync(articleId);
+            var article = await _repository.GetByIdAsync(articleId);
 
             if (article != null)
             {
@@ -54,7 +55,7 @@ namespace NewsNotifier.Services
                 if (reportCount >= 3 && !article.IsHidden)
                 {
                     article.IsHidden = true;
-                    await _repo.UpdateAsync(article);
+                    await _repository.UpdateAsync(article);
 
                     string autoHideSubject = $"Article Auto-Hidden: {article.Title}";
                     string autoHideBody = $"The article with ID {article.ArticleID} and title '{article.Title}' has been automatically hidden after reaching {reportCount} reports.";
@@ -66,44 +67,50 @@ namespace NewsNotifier.Services
 
         public async Task<IEnumerable<(NewsArticle Article, int ReportCount)>> GetReportedArticlesAsync()
         {
-            return await _repo.GetReportedArticlesAsync();
+            return await _repository.GetReportedArticlesAsync();
         }
 
         public async Task HideOrUnhideArticleAsync(int articleId, bool hide)
         {
-            var article = await _repo.GetByIdAsync(articleId);
+            var article = await _repository.GetByIdAsync(articleId);
             if (article != null)
             {
                 article.IsHidden = hide;
-                await _repo.UpdateAsync(article);
+                await _repository.UpdateAsync(article);
             }
         }
 
         public async Task HideOrUnhideCategoryAsync(int categoryId, bool hide)
         {
-            var category = await _repo.GetCategoryByIdAsync(categoryId);
+            var category = await _repository.GetCategoryByIdAsync(categoryId);
             if (category != null)
             {
                 category.IsHidden = hide;
-                await _repo.UpdateCategoryAsync(category);
+                await _repository.UpdateCategoryAsync(category);
             }
         }
 
         public async Task AddBlockedKeywordAsync(string keyword)
         {
             var blocked = new BlockedKeyword { Keyword = keyword.ToLower() };
-            await _repo.AddBlockedKeywordAsync(blocked);
+            await _repository.AddBlockedKeywordAsync(blocked);
         }
 
         public async Task<IEnumerable<string>> GetBlockedKeywordsAsync()
         {
-            return await _repo.GetBlockedKeywordsAsync();
+            return await _repository.GetBlockedKeywordsAsync();
         }
 
         public async Task DeleteBlockedKeywordAsync(string keyword)
         {
-            await _repo.DeleteBlockedKeywordAsync(keyword.ToLower());
+            await _repository.DeleteBlockedKeywordAsync(keyword.ToLower());
         }
+
+
+        public async Task<List<NewsArticle>> GetPersonalizedNewsAsync(List<int> categoryIds, List<string> keywords)
+        {
+            return await _repository.GetPersonalizedNewsAsync(categoryIds, keywords);
+        } 
 
 
     }

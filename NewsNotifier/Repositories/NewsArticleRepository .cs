@@ -69,11 +69,11 @@ namespace NewsNotifier.Repositories
         public async Task<IEnumerable<(NewsArticle Article, int ReportCount)>> GetReportedArticlesAsync()
         {
             return await _context.ReportedArticles
-                .Include(r => r.NewsArticle)  // Include the navigation property
+                .Include(r => r.NewsArticle) 
                 .GroupBy(r => r.ArticleID)
                 .Select(g => new
                 {
-                    Article = g.First().NewsArticle,  // Use NewsArticle, not Article
+                    Article = g.First().NewsArticle, 
                     ReportCount = g.Count()
                 })
                 .ToListAsync()
@@ -114,6 +114,18 @@ namespace NewsNotifier.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+
+        public async Task<List<NewsArticle>> GetPersonalizedNewsAsync(List<int> categoryIds, List<string> keywords)
+        {
+            return await _context.NewsArticles
+                .Include(a => a.Category)
+                .Where(a => !a.IsHidden && !a.Category.IsHidden &&
+                       (categoryIds.Contains(a.CategoryID) ||
+                       keywords.Any(k => a.Title.ToLower().Contains(k) || (a.Content ?? "").ToLower().Contains(k))))
+                .ToListAsync();
+        }
+
 
     }
 }
